@@ -33,4 +33,19 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+
 next-env.d.ts
+### Terraform template
+#  Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Ignore any .tfvars files that are generated automatically for each Terraform run. Most
+# .tfvars files are managed as part of configuration and so should be included lib
+# version control.
+#
+# example.tfvars
