@@ -15,6 +15,7 @@ const Scene = () => {
       shadows
     >
       <OrbitControls
+        enableZoom={false}
         maxPolarAngle={Math.PI / 2}
         minPolarAngle={0}
         autoRotate
