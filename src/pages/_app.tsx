@@ -32,11 +32,6 @@ export default function App({
       >
         <div className="app">
           <Head>
-            <script
-              src="https://upload-widget.cloudinary.com/global/all.js"
-              type="text/javascript"
-            ></script>
-            <script src="//editor.unlayer.com/embed.js"></script>
             <meta
               name="viewport"
               content="width=device-width, initial-scale=1, minimal-ui"

@@ -3,11 +3,11 @@ import {
   useUser,
   useSupabaseClient,
   Session,
-} from '@supabase/auth-helpers-react';
-import Avatar from './Avatar';
-import { setUser } from '@/slices/userSlice';
-import { useDispatch } from 'react-redux';
-import { fetcher } from '@/utils/fetcher';
+} from "@supabase/auth-helpers-react";
+import Avatar from "./Avatar";
+import { setUser } from "@/slices/userSlice";
+import { useDispatch } from "react-redux";
+import { fetcher } from "@/utils/fetcher";
 
 type Database = any;
 type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
@@ -23,14 +23,16 @@ const Account = ({ session }: { session: Session }) => {
 
   useEffect(() => {
     getProfile();
-  }, [session,dispatch]);
+  }, [session, dispatch]);
 
   async function getProfile() {
     try {
       setLoading(true);
       if (!user) throw new Error("No user");
 
-      const profile = await fetcher('profiles', 'find', { id: session?.user.id });
+      const profile = await fetcher("profiles", "find", {
+        id: session?.user.id,
+      });
 
       if (profile) {
         dispatch(
@@ -74,9 +76,9 @@ const Account = ({ session }: { session: Session }) => {
         updated_at: new Date().toISOString(),
       };
 
-      let { error } = await supabase.from('profiles').upsert(updates);
+      let { error } = await supabase.from("profiles").upsert(updates);
       if (error) throw error;
-      alert('Profile updated!');
+      alert("Profile updated!");
     } catch (error) {
       alert("Error updating the data!");
       console.log(error);
@@ -94,7 +96,7 @@ const Account = ({ session }: { session: Session }) => {
   }
 
   return (
-    <div >
+    <div className="flex flex-col space-y-6">
       <Avatar
         uid={user?.id as string}
         url={avatar_url}
@@ -107,13 +109,20 @@ const Account = ({ session }: { session: Session }) => {
       />
       <div>
         <label htmlFor="email">Email</label>
-        <input id="email" type="text" value={session.user.email} disabled />
+        <input
+          id="email"
+          type="text"
+          value={session.user.email}
+          disabled
+          className=" text-gray-900 w-full placeholder:italic placeholder:text-slate-400 block bg-white  border border-slate-300 rounded-md py-3 pl-9 pr-3 shadow-sm focus:outline-none focus:border-green-500 focus:ring-green-500 focus:ring-1 sm:text-sm "
+        />
       </div>
       <div>
         <label htmlFor="username">Username</label>
         <input
           id="username"
           type="text"
+          className=" text-gray-900 w-full placeholder:italic placeholder:text-slate-400 block bg-white  border border-slate-300 rounded-md py-3 pl-9 pr-3 shadow-sm focus:outline-none focus:border-green-500 focus:ring-green-500 focus:ring-1 sm:text-sm "
           value={username || ""}
           onChange={(e) => setUsername(e.target.value)}
         />
@@ -123,6 +132,7 @@ const Account = ({ session }: { session: Session }) => {
         <input
           id="website"
           type="website"
+          className=" text-gray-900 w-full placeholder:italic placeholder:text-slate-400 block bg-white  border border-slate-300 rounded-md py-3 pl-9 pr-3 shadow-sm focus:outline-none focus:border-green-500 focus:ring-green-500 focus:ring-1 sm:text-sm "
           value={website || ""}
           onChange={(e) => setWebsite(e.target.value)}
         />
@@ -130,7 +140,7 @@ const Account = ({ session }: { session: Session }) => {
 
       <div>
         <button
-          className="button primary block"
+          className="button primary block "
           onClick={() => updateProfile({ username, website, avatar_url })}
           disabled={loading}
         >

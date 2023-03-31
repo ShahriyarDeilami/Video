@@ -1,0 +1,73 @@
+name: PROD CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-20.04
+    environment: prod
+    env:
+      REPOSITORY_NAME: ${{ secrets.REPOSITORY_NAME}}
+      AWS_REGION: ${{ secrets.AWS_REGION }} 
+      ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }} 
+      TASK_DEFINITION: ${{ secrets.TASK_DEFINITION }}
+
+    steps:
+      - name: Check Out
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+
+      - name: Image build and push
+        id: docker-build
+        run: |
+          export IMAGE_TAG=$(git rev-parse --short HEAD)
+          export NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          export NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+          export ACCOUNT_ID=$(aws sts get-caller-identity | jq -r .Account)
+          aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+          export REPOSITORY_URL=${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPOSITORY_NAME}
+          
+          
+          docker build --platform linux/amd64 -t ${REPOSITORY_NAME}:${IMAGE_TAG} .
+          docker tag ${REPOSITORY_NAME}:${IMAGE_TAG} ${REPOSITORY_URL}:${IMAGE_TAG}
+          docker push ${REPOSITORY_URL}:${IMAGE_TAG}
+          echo "::set-output name=image::${REPOSITORY_NAME}:${IMAGE_TAG}"
+
+
+
+      # - name: Download task definition
+      #   run: |
+      #     aws ecs describe-task-definition --task-definition ${TASK_DEFINITION} --query taskDefinition > task-definition.json
+
+      # - name: Fill in the new image ID in the Amazon ECS task definition
+      #   id: task-def
+      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+      #   with:
+      #     task-definition: task-definition.json
+      #     container-name: prod-vedios
+      #     image: ${{ steps.build-image.outputs.image }}
+
+      # - name: Deploy Amazon ECS task definition
+      #   id: deploy
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
+      #     service: prod-video-service
+      #     cluster:  prod-video-ecs
+      #     wait-for-service-stability: true
+
+      # - name: Print Task definition
+      #   id: print-def
+      #   run: |
+      #     aws ecs describe-task-definition --task-definition ${TASK_DEFINITION} --query taskDefinition
+

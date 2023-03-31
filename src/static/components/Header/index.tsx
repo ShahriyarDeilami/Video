@@ -51,87 +51,101 @@ const Header = ({}) => {
 
   return (
     <header
-      style={{
-        height: "64px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "spaceBetween",
-        padding: "16px",
-        position: "sticky",
-        top: "0",
-        zIndex: "10",
-        transition: "height 0.3s",
-      }}
+      // style={{
+      //   height: "64px",
+      //   display: "flex",
+      //   alignItems: "center",
+      //   justifyContent: "spaceBetween",
+      //   padding: "16px",
+      //   position: "sticky",
+      //   top: "0",
+      //   zIndex: "10",
+      //   transition: "height 0.3s",
+      // }}
+      className="bg-gray-900 text-cyan-50 p-4 flex justify-between items-center shadow-md "
     >
       <nav
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "16px",
-        }}
+        // style={{
+        //   display: "flex",
+        //   alignItems: "center",
+        //   gap: "16px",
+        // }}
+        className="flex items-center gap-4 justify-between w-full px-4 "
       >
-        <Link href="/">Home</Link>
-        <Link href="/browse">Browse</Link>
-        <Link href="/upload">Upload</Link>
+        <div className="flex items-center gap-4">
+          <Link href="/">Home</Link>
+          <Link href="/browse">Browse</Link>
+          <Link href="/upload">Upload</Link>
+        </div>
 
-        {session ? (
-          <div style={{ cursor: "pointer" }} onClick={toggleDropdown}>
-            <Avatar
-              uid={user?.id}
-              url={user?.avatarUrl}
-              size={40}
-              onUpload={() => {}}
-              readOnly={true}
-            />
-          </div>
-        ) : (
-          <Link href="/login">Login</Link>
-        )}
-
-        {showDropdown && (
-          <div
-            style={{
-              marginTop: "10rem",
-              marginLeft: "-3rem",
-              display: "block",
-              zIndex: 1,
-              minWidth: "2rem",
-              padding: "0.5rem",
-              border: "1px solid #ccc",
-              borderRadius: "0.25rem",
-            }}
-          >
-            <Link
-              href="/login"
-              onClick={toggleDropdown}
-              style={{
-                display: "block",
-                padding: "0.5rem",
-                textDecoration: "none",
-                fontWeight: "bold",
-                transition: "background-color 0.3s ease",
-              }}
-            >
-              Acoount Page
-            </Link>
+        <section className="flex justify-between items-center">
+          {session ? (
             <div
-              onClick={() => {
-                supabase.auth.signOut();
-                setShowDropdown(false);
-              }}
-              style={{
-                display: "block",
-                padding: "0.5rem",
-                textDecoration: "none",
-                cursor: "pointer",
-                fontWeight: "bold",
-                transition: "background-color 0.3s ease",
-              }}
+              className="flex items-center gap-4 bg-green-600 border-2 border-white rounded-md p-2 cursor-pointer"
+              onClick={toggleDropdown}
             >
-              Log Out
+              <Avatar
+                uid={user?.id}
+                url={user?.avatarUrl}
+                size={40}
+                onUpload={() => {}}
+                readOnly={true}
+              />
             </div>
-          </div>
-        )}
+          ) : (
+            <Link href="/login">Login</Link>
+          )}
+
+          {showDropdown && (
+            <div
+              style={
+                {
+                  // marginTop: "10rem",
+                  // marginLeft: "-3rem",
+                  // display: "block",
+                  // zIndex: 1,
+                  // minWidth: "2rem",
+                  // padding: "0.5rem",
+                  // border: "1px solid #ccc",
+                  // borderRadius: "0.25rem",
+                }
+              }
+              className="absolute top-20 right-8 p-0.5 bg-zinc-200   rounded-md shadow-md z-10"
+            >
+              <Link
+                href="/login"
+                onClick={toggleDropdown}
+                // style={{
+                //   display: "block",
+                //   padding: "0.5rem",
+                //   textDecoration: "none",
+                //   fontWeight: "bold",
+                //   transition: "background-color 0.3s ease",
+                // }}
+                className=" block p-2  transition duration-300 ease-in-out bg-gray-700 hover:bg-gray-800 text-white rounded-t-sm cursor-pointer "
+              >
+                Acoount Page
+              </Link>
+              <div
+                onClick={() => {
+                  supabase.auth.signOut();
+                  setShowDropdown(false);
+                }}
+                // style={{
+                //   display: "block",
+                //   padding: "0.5rem",
+                //   textDecoration: "none",
+                //   cursor: "pointer",
+                //   fontWeight: "bold",
+                //   transition: "background-color 0.3s ease",
+                // }}
+                className=" block p-2 transition duration-300 ease-in-out bg-gray-700  hover:bg-gray-800  text-white  cursor-pointer rounded-b-sm"
+              >
+                Log Out
+              </div>
+            </div>
+          )}
+        </section>
       </nav>
     </header>
   );

@@ -16,7 +16,7 @@ const Home = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
+      <main className="bg-gray-900">
         <Scene />
         <div
           className="container"
@@ -27,7 +27,7 @@ const Home = () => {
           }}
         >
           <Link href={session ? "/browse" : "/login"}>
-            <button>Browse</button>
+            <button className="bg-white text-black hover:bg-green-500 ">Browse</button>
           </Link>
         </div>
       </main>

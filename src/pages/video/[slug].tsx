@@ -17,9 +17,11 @@ const Browse = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Browse Page</h1>
-      <video src={video?.url} controls />
+    <div className="bg-zinc-200 p-6 gap-6 h-screen">
+      <h1 className="text-4xl font-semibold  ">Browse Page</h1>
+      <section className="grid place-content-center mx-auto w-2/5 h-full  place-items-center">
+        <video className="w-full" src={video?.url} controls />
+      </section>
     </div>
   );
 };
