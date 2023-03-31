@@ -451,3 +451,8 @@ button.primary,
   margin-bottom: 10px;
   text-decoration: none;
 }
+
+video {
+  width: 400px;
+  aspect-ratio: 1;
+}

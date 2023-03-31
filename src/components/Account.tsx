@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   useUser,
   useSupabaseClient,
@@ -10,32 +10,33 @@ import { useDispatch } from 'react-redux';
 import { fetcher } from '@/utils/fetcher';
 
 type Database = any;
-type Profiles = Database['public']['Tables']['profiles']['Row'];
+type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
 
 const Account = ({ session }: { session: Session }) => {
   const supabase = useSupabaseClient<Database>();
   const user = useUser();
   const [loading, setLoading] = useState(true);
-  const [username, setUsername] = useState<Profiles['username']>(null);
-  const [website, setWebsite] = useState<Profiles['website']>(null);
-  const [avatar_url, setAvatarUrl] = useState<Profiles['avatar_url']>(null);
+  const [username, setUsername] = useState<Profiles["username"]>(null);
+  const [website, setWebsite] = useState<Profiles["website"]>(null);
+  const [avatar_url, setAvatarUrl] = useState<Profiles["avatar_url"]>(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
     getProfile();
-  }, [session]);
+  }, [session,dispatch]);
 
   async function getProfile() {
     try {
       setLoading(true);
-      if (!user) throw new Error('No user');
+      if (!user) throw new Error("No user");
 
-      const profile = await fetcher('profiles', 'find', { id: user.id });
+      const profile = await fetcher('profiles', 'find', { id: session?.user.id });
 
       if (profile) {
         dispatch(
           setUser({
-            email: session.user.email || '',
+            id: profile.id,
+            email: session.user.email || "",
             name: profile.username,
             avatarUrl: profile.avatar_url,
           })
@@ -45,7 +46,7 @@ const Account = ({ session }: { session: Session }) => {
         setAvatarUrl(profile.avatar_url);
       }
     } catch (error) {
-      alert('Error loading user data!');
+      alert("Error loading user data!");
       console.log(error);
     } finally {
       setLoading(false);
@@ -57,13 +58,13 @@ const Account = ({ session }: { session: Session }) => {
     website,
     avatar_url,
   }: {
-    username: Profiles['username'];
-    website: Profiles['website'];
-    avatar_url: Profiles['avatar_url'];
+    username: Profiles["username"];
+    website: Profiles["website"];
+    avatar_url: Profiles["avatar_url"];
   }) {
     try {
       setLoading(true);
-      if (!user) throw new Error('No user');
+      if (!user) throw new Error("No user");
 
       const updates = {
         id: user.id,
@@ -77,12 +78,13 @@ const Account = ({ session }: { session: Session }) => {
       if (error) throw error;
       alert('Profile updated!');
     } catch (error) {
-      alert('Error updating the data!');
+      alert("Error updating the data!");
       console.log(error);
     } finally {
       dispatch(
         setUser({
-          email: session.user.email || '',
+          id: user?.id || "",
+          email: session.user.email || "",
           name: username,
           avatarUrl: avatar_url,
         })
@@ -92,7 +94,7 @@ const Account = ({ session }: { session: Session }) => {
   }
 
   return (
-    <div className='form-widget'>
+    <div >
       <Avatar
         uid={user?.id as string}
         url={avatar_url}
@@ -101,43 +103,44 @@ const Account = ({ session }: { session: Session }) => {
           setAvatarUrl(url);
           updateProfile({ username, website, avatar_url: url });
         }}
+        readOnly={false}
       />
       <div>
-        <label htmlFor='email'>Email</label>
-        <input id='email' type='text' value={session.user.email} disabled />
+        <label htmlFor="email">Email</label>
+        <input id="email" type="text" value={session.user.email} disabled />
       </div>
       <div>
-        <label htmlFor='username'>Username</label>
+        <label htmlFor="username">Username</label>
         <input
-          id='username'
-          type='text'
-          value={username || ''}
+          id="username"
+          type="text"
+          value={username || ""}
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
       <div>
-        <label htmlFor='website'>Website</label>
+        <label htmlFor="website">Website</label>
         <input
-          id='website'
-          type='website'
-          value={website || ''}
+          id="website"
+          type="website"
+          value={website || ""}
           onChange={(e) => setWebsite(e.target.value)}
         />
       </div>
 
       <div>
         <button
-          className='button primary block'
+          className="button primary block"
           onClick={() => updateProfile({ username, website, avatar_url })}
           disabled={loading}
         >
-          {loading ? 'Loading ...' : 'Update'}
+          {loading ? "Loading ..." : "Update"}
         </button>
       </div>
 
       <div>
         <button
-          className='button block'
+          className="button block"
           onClick={() => supabase.auth.signOut()}
         >
           Sign Out

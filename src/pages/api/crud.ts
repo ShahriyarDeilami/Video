@@ -3,8 +3,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
 export default async function handler(
@@ -20,11 +20,19 @@ export default async function handler(
   }
 
   if (action === "find") {
-    apiData = await supabase.from(model).select("*").match(data).limit(1).single();
+    apiData = await supabase.from(model).select("*").match(data).single();
+  }
+
+  if (action === "create") {
+    apiData = await supabase.from(model).insert(data);
+  }
+
+  if (action === "update") {
+    apiData = await supabase.from(model).update(data).match({ id: data.id });
   }
 
   if (action === "delete") {
-    apiData = await supabase.from(model).delete(data).select("*");
+    apiData = await supabase.from(model).delete().match(data).select("*");
   }
 
   if (!apiData?.error) res.json(apiData?.data);
