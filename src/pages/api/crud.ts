@@ -20,7 +20,7 @@ export default async function handler(
   }
 
   if (action === "find") {
-    apiData = await supabase.from(model).select("*").match(data).limit(1);
+    apiData = await supabase.from(model).select("*").match(data).limit(1).single();
   }
 
   if (action === "delete") {

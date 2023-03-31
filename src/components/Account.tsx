@@ -7,7 +7,7 @@ import {
 import Avatar from './Avatar';
 import { setUser } from '@/slices/userSlice';
 import { useDispatch } from 'react-redux';
-import Link from 'next/link';
+import { fetcher } from '@/utils/fetcher';
 
 type Database = any;
 type Profiles = Database['public']['Tables']['profiles']['Row'];
@@ -30,27 +30,19 @@ const Account = ({ session }: { session: Session }) => {
       setLoading(true);
       if (!user) throw new Error('No user');
 
-      let { data, error, status } = await supabase
-        .from('profiles')
-        .select(`username, website, avatar_url`)
-        .eq('id', user.id)
-        .single();
+      const profile = await fetcher('profiles', 'find', { id: user.id });
 
-      if (error && status !== 406) {
-        throw error;
-      }
-
-      if (data) {
+      if (profile) {
         dispatch(
           setUser({
             email: session.user.email || '',
-            name: data.username,
-            avatarUrl: data.avatar_url,
+            name: profile.username,
+            avatarUrl: profile.avatar_url,
           })
         );
-        setUsername(data.username);
-        setWebsite(data.website);
-        setAvatarUrl(data.avatar_url);
+        setUsername(profile.username);
+        setWebsite(profile.website);
+        setAvatarUrl(profile.avatar_url);
       }
     } catch (error) {
       alert('Error loading user data!');
@@ -101,11 +93,6 @@ const Account = ({ session }: { session: Session }) => {
 
   return (
     <div className='form-widget'>
-      <div className='button block'>
-        <Link href='/'>
-          <button>Home</button>
-        </Link>
-      </div>
       <Avatar
         uid={user?.id as string}
         url={avatar_url}
